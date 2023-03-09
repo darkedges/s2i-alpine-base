@@ -1,6 +1,4 @@
-FROM alpine:3.4
-
-MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
+FROM alpine:3.17.2
 
 LABEL \
   # Location of the STI scripts inside the image
@@ -19,18 +17,14 @@ ENV \
   REFRESHED_AT=2016-04-7T14:27
 
 RUN mkdir -p ${HOME} && \
-    mkdir -p /usr/libexec/s2i && \
-    adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D default && \
-    chown -R 1001:0 /opt/app-root && \
-    echo 'http://dl-4.alpinelinux.org/alpine/3.4/community' >> /etc/apk/repositories && \
-    apk -U upgrade && \
-    apk add --no-cache --update bash curl wget \
-        tar unzip findutils git gettext gdb lsof patch \
-        libcurl libxml2 libxslt openssl-dev zlib-dev \
-        make automake gcc g++ binutils-gold linux-headers paxctl libgcc libstdc++ \
-        python gnupg ncurses-libs ca-certificates && \
-    update-ca-certificates --fresh && \
-    rm -rf /var/cache/apk/*
+  mkdir -p /usr/libexec/s2i && \
+  adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D default && \
+  mkdir -p /opt/app-root/etc &&\
+  chown -R 1001:0 /opt/app-root && \
+  apk -U upgrade && \
+  apk add --no-cache --update curl bash ca-certificates nss_wrapper && \
+  update-ca-certificates --fresh && \
+  rm -rf /var/cache/apk/*
 
 # Copy executable utilities
 COPY ./bin/ /usr/bin/
